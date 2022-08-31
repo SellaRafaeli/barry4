@@ -1,0 +1,11 @@
+<%
+  apps = $apps.get_many(user_id: cuid)
+%>
+
+<h1> My apps </h1>
+
+<% if apps.any? %>
+
+<% else %>
+  <a class=btn2 href='/apps/new'>Create App</a>
+<% end %>
