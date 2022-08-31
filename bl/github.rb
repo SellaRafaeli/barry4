@@ -1,11 +1,16 @@
 =begin
+Background:
+We are building a platform for launching Web Applications. A user chooses a template, and we create a repo with that template (in the user's Github profile) and deploy the code onto a server on each change to the repo. 
+
+This effectively lets a user create an editable web application in production, with a single click.
+
 Tasks (all code in this file)
 
 0. Github App
 1. Implement "Login with Github", with permissions to modify repos, after login store Github token to user doc in $users collection.
 2. Implement "Create repo" (based on source to copy), add webhook to trigger deployment on each change to 'master'
 
-# https://docs.github.com/en/rest/webhooks/repo-config 
+# Docs link: https://docs.github.com/en/rest/webhooks/repo-config 
 
 =end
 
