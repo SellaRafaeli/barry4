@@ -1,11 +1,40 @@
 <%
   apps = $apps.get_many(user_id: cuid)
-%>
 
+  apps = [{_id: 'mock', mock: true, name: 'Mock', repo: 'none', ip:'1.2.3.4'}]
+%>
+<style>
+.single_app {
+  border:2px solid grey;
+  padding:20px;
+}
+.single_app_label {
+  color: grey;
+}
+</style>
 <h1> My apps </h1>
 
-<% if apps.any? %>
 
-<% else %>
-  <a class=btn2 href='/apps/new'>Create App</a>
+<% apps.each do |app| %>
+  <div class='single_app'>
+    <span class='single_app_label'>ID: <a href='/apps/<%=app[:_id]%>'><%=app[:_id]%></a></span> | 
+    <span class='single_app_label'>IP: <%=app[:ip]%></span> | <span class='single_app_label'>Repo: <%=app[:repo]%></span>
+    
+    <br/><br/>
+    
+
+    <button onclick="$('.app_chooser').toggle()"> Launch new app </button>
+    <br/>
+    <div class='app_chooser noDisplay'>
+      <br/>
+      <label> Template: </label>
+      <select>
+        <option> MERN: Mongo, Express, React, Node  </option>
+        <option> MEAN: Mongo, Express, Angular </option>
+        <option> MEVN: Mongo, Express, Vue </option>
+        <option> MORS: Mongo, Ruby, Sinatra</option>
+      </select>
+      <button class='btn2'>Launch</button>
+    </div>
+  </div>  
 <% end %>

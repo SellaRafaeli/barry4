@@ -1,0 +1,90 @@
+<%
+  app_id  = pr[:id]
+  app     = $apps.get(app_id) || {}
+  files   = $files.all(app_id: app_id)
+  file_id = pr[:file_id]
+
+  if file_id
+    file = $files.get(file_id)    
+    halt unless file && (file[:user_id] == cuid)
+  end
+
+  local_data = {app_id: app_id, files: files, file: file, file_id: file_id}
+%>
+
+<style>
+:root {
+  --fe_width: 12%;
+  --editor_width: 50%;
+}
+.ide_wrapper {
+  zdisplay: flex:;
+}
+.file_explorer {
+  height: 100%;
+  min-height: 500px;
+  width: var(--fe_width);
+  zflex: 1;
+  background-color: whitesmoke;
+  display: inline-block;
+}
+#editor {
+  width: var(--editor_width);
+  margin-top: 50px;
+  margin-left: var(--fe_width);; 
+  flex: 4;
+  /*file_explorer_width*/
+}
+#preview {
+  margin-left: calc(var(--editor_width));
+  border:1px solid blue;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  width: 35%;
+}
+.ib {
+  display: inline-block;
+}
+</style>
+
+<%#= erb :'apps/app.js', locals: local_data %>
+
+<div class='header' style='height: 42px'>
+  <h1 style='display: inline-block; height: 50px; margin:0'> 
+    <a href='/apps/<%=app_id%>' class='app-name' style='margin-right: 20px'><%= app[:name] %></a>
+  </h1>
+  <button id=newFileBtn class='btn2' onclick='addFile()'> New File </button>
+  <button id=saveBtn class='btn2' onclick=saveFile()> Save </button>
+  <button id=publishBtn class='btn2'> Publish </button> 
+  <form method="post" enctype="multipart/form-data" action="/apps/<%=app[:_id]%>/upload_dir" style='display: inline-block;'>
+        Folder Name: <input type="text" name="foldername" />
+        Choose Directory:  <input type="file" name="files[]" id="files" multiple directory="" webkitdirectory="" mozdirectory="">
+    <input class="button" type="submit" value="Upload" name="upload" />
+</form>
+</div>
+
+<div class='ide_wrapper'>
+<% @file_explorer_width = '5%' %>
+<%= erb :'/file_explorer/file_explorer', locals: local_data %>
+<%= erb :'/editor/editor', locals: local_data %>
+<%= erb :'/preview/preview', locals: local_data %>
+</div>
+
+<script>
+function addFile() {
+  if (name = prompt('Enter name for new file')) {
+    postJSON('/file',{name, app_id: '<%=app_id%>'}).then(r => document.location.reload());
+  }
+}
+
+function postJSON(url, data) {
+  data = data || {}; data.ajax = true;
+  return fetch(url, { method: 'post', headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data)
+  }).then(res => { return res.json();}).catch(err => {
+    console.log('failed parsing response from ',url,'err is',err);
+    return {err: err}
+  });
+}
+</script>
