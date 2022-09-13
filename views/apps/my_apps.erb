@@ -95,13 +95,17 @@
 <script>
 var spinner = $('.loading-spinner-area');
 var results = $('.loading-results')
+var time    = 1000;
+<% if $prod %>
+time = 5000;
+<% end %>
 function launchApp() {
 
   spinner.show();
   setTimeout(()=>{
     spinner.hide();
     results.show();
-  },1000);
+  },time);
 }
 
 <% if !$prod %>
