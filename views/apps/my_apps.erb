@@ -1,7 +1,7 @@
 <%
   apps = $apps.get_many(user_id: cuid)
 
-  apps = [{_id: 'mock', mock: true, name: 'Mock', repo: 'none', ip:'1.2.3.4'}]
+  apps = [] #{_id: 'mock', mock: true, name: 'Mock', repo: 'none', ip:'1.2.3.4'}]
 %>
 <style>
 .single_app {
@@ -11,9 +11,35 @@
 .single_app_label {
   color: grey;
 }
+
+.app_chooser {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+.loading-spinner-area {
+  display: none;
+  max-width: 100px;
+  margin: auto;
+  margin-top: 20px;
+}
+.loading-spinner {
+  background-image: url(img/loaders/rosary.svg);
+  height: 100px;
+  background-repeat: no-repeat;
+  
+  
+}
+.loading-results {
+  display: none;      
+}
+.loading-results-contents {
+  margin-top:20px;
+  display: flex;
+  justify-content: space-around;
+}
 </style>
 <h1> My apps </h1>
-
 
 <% apps.each do |app| %>
   <div class='single_app'>
@@ -21,20 +47,64 @@
     <span class='single_app_label'>IP: <%=app[:ip]%></span> | <span class='single_app_label'>Repo: <%=app[:repo]%></span>
     
     <br/><br/>
-    
-
-    <button onclick="$('.app_chooser').toggle()"> Launch new app </button>
-    <br/>
-    <div class='app_chooser noDisplay'>
-      <br/>
-      <label> Template: </label>
-      <select>
-        <option> MERN: Mongo, Express, React, Node  </option>
-        <option> MEAN: Mongo, Express, Angular </option>
-        <option> MEVN: Mongo, Express, Vue </option>
-        <option> MORS: Mongo, Ruby, Sinatra</option>
-      </select>
-      <button class='btn2'>Launch</button>
-    </div>
   </div>  
+<% end %>  
+
+<div class='launch-app-container'>
+  <button class=btn2 onclick="$('.app_chooser').toggle()"><i class='fa fa-rocket'></i> Launch new app </button>
+  <br/>
+  <br/>
+  
+  <div class='app_chooser <%= "noDisplay" if $prod %>'>    
+    <label> Choose Template: </label>
+    <select>      
+      <option> 🚀 Barry: Mongo, Ruby, Sinatra Backoffice & Dashboard</option>
+      <option> 🚀 Vuelery: Mongo, Ruby, Sinatra</option>
+      <option> MERN: Mongo, Express, React, Node  </option>
+      <option> MEAN: Mongo, Express, Angular </option>
+    </select>    
+    <button onclick=launchApp() class='btn2'>Launch</button>    
+  </div>
+
+  <div class='loading-area'>
+    <div class='loading-spinner-area'>
+      <div class='loading-spinner'></div>
+      <div style='margin-top:10px'>Deploying app...</div>
+    </div>
+
+    <div class='loading-results'>
+      <div class='loading-results-contents'>
+        <div class='ip'>
+          <div><b> IP </b></div>
+          <div style='margin: 10px auto'><a class=simple_link target=_blank href='http://184.72.177.158'>184.72.177.158</a></div>          
+        </div>
+
+        <div class='repo'>
+          <div><b> Repo </b></div>
+          <% url = "https://github.com/SellaRafaeli/barryapp" %>
+          <div style='margin: 10px auto'><a class=simple_link target=_blank href='<%=url%>'><%=url%></a></div>
+          <div>
+            <input type=checkbox checked=true> updates trigger deploy
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var spinner = $('.loading-spinner-area');
+var results = $('.loading-results')
+function launchApp() {
+
+  spinner.show();
+  setTimeout(()=>{
+    spinner.hide();
+    results.show();
+  },1000);
+}
+
+<% if !$prod %>
+launchApp();
 <% end %>
+</script>
